@@ -1,0 +1,57 @@
+{
+  "id": 1,
+  "title": "Servey",
+  "description": "설문지 설명",
+  "sections": [
+    {
+      "id": 1,
+      "items": [
+        {
+          "id": 1,
+          "question": {
+            "title": "radio input",
+            "type": "radio",
+            "options": ["radio option1", "radio option2", "radio option3"],
+            "required": true
+          }
+        },
+        {
+          "id": 2,
+          "question": {
+            "title": "radio input",
+            "type": "checbox",
+            "options": [
+              "checkbox option1",
+              "checkbox option2",
+              "checkbox option3"
+            ],
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "items": [
+        {
+          "id": 1,
+          "question": {
+            "title": "select input 1",
+            "type": "select",
+            "options": ["select option1", "select option2", "select option3"],
+            "required": true
+          }
+        },
+        {
+          "id": 2,
+          "question": {
+            "title": "textarea input 1",
+            "type": "textarea",
+            "options": "",
+            "required": true
+          }
+        }
+      ]
+    }
+  ]
+}
