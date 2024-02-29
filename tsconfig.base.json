@@ -16,7 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@ssoon-servey/shared-ui": ["./libs/shared/ui/src/index.ts"],
-      "@ssoon-servey/supabase": ["./libs/supabase/index.ts"]
+      "@ssoon-servey/supabase": ["libs/supabase/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
