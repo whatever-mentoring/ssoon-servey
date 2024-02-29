@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev:servey-web": "nx serve servey-web",
-    "dev:servey-admin": "nx serve servey-admin"
+    "dev:survey-web": "nx serve survey-web",
+    "dev:survey-admin": "nx serve survey-admin"
   },
   "private": true,
   "dependencies": {

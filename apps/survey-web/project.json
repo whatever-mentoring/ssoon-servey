@@ -1,7 +1,7 @@
 {
-  "name": "servey-admin",
+  "name": "survey-web",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/servey-admin/src",
+  "sourceRoot": "apps/survey-web/src",
   "projectType": "application",
   "targets": {},
   "tags": []

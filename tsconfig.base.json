@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ssoon-servey/shared-ui": ["./libs/shared/ui/src/index.ts"]
+      "@ssoon-servey/shared-ui": ["./libs/shared/ui/src/index.ts"],
+      "@ssoon-servey/supabase": ["./libs/supabase/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
