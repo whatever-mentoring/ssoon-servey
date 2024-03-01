@@ -9,16 +9,22 @@ import { insertItem } from '@ssoon-servey/utils';
 import { useState } from 'react';
 import { produce } from 'immer';
 
-const newItem: Item = {
+let id = 0;
+const genId = () => {
+  return ++id;
+};
+
+const newItem = (): Item => ({
   title: '',
   type: 'radio',
   required: false,
   options: [{ text: '옵션1' }],
-};
-const newSection: SurveySection = {
+});
+const newSection = (): SurveySection & { id: number } => ({
+  id: genId(),
   title: undefined,
-  items: [newItem],
-};
+  items: [newItem()],
+});
 
 const useSurveyViewModel = () => {
   const [survey, setSurvey] = useState<Omit<Survey, 'sections'>>({
@@ -30,9 +36,9 @@ const useSurveyViewModel = () => {
     itemId: 0,
   });
 
-  const [surveySections, setSurveySections] = useState<SurveySection[]>([
-    newSection,
-  ]);
+  const [surveySections, setSurveySections] = useState<
+    (SurveySection & { id: number })[]
+  >([newSection()]);
 
   const mutate = useCreateSurvey();
 
@@ -51,7 +57,7 @@ const useSurveyViewModel = () => {
     setSurveySections((sections) =>
       produce(sections, (sections) => {
         const section = sections[sectionId];
-        section.items = insertItem(section.items, nextItemId, newItem);
+        section.items = insertItem(section.items, nextItemId, newItem());
       })
     );
 
@@ -78,7 +84,7 @@ const useSurveyViewModel = () => {
     const { sectionId } = currentActiveItemIndex;
     const nextSectionId = sectionId + 1;
     setSurveySections((section) =>
-      insertItem(section, nextSectionId, newSection)
+      insertItem(section, nextSectionId, newSection())
     );
     setCurrentActiveItemIndex((prev) => ({
       ...prev,
@@ -119,7 +125,10 @@ const useSurveyViewModel = () => {
     mutate({
       title: survey.title,
       description: survey.description,
-      sections: surveySections,
+      sections: surveySections.map((section) => ({
+        title: section.title,
+        items: section.items,
+      })),
     });
   };
   return {

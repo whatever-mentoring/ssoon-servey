@@ -43,11 +43,11 @@ export default function App() {
           </div>
         </Card>
         {surveySections.map((section, sectionIndex) => (
-          <div key={sectionIndex}>
+          <div key={section.id}>
             <div>{`section ${sectionIndex + 1}`}</div>
             {section.items.map((item, itemIndex) => (
               <SurveyItem
-                key={`${sectionIndex}_${itemIndex}`}
+                key={`${section.id}_${itemIndex}`}
                 item={item}
                 onActiveItem={() => handleActiveItem(sectionIndex, itemIndex)}
                 onAddOptions={handleAddOption}
