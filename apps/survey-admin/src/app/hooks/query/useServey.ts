@@ -1,26 +1,32 @@
 import { useSupabaseContext } from '@ssoon-servey/supabase';
+import { z } from 'zod';
 
-export type Option = {
-  text: string;
-};
+const OptionSchema = z.object({
+  text: z.string().min(1, { message: '텍스트를 입력해주세요' }),
+});
 
-export type SurveyItem = {
-  title: string;
-  type: 'radio' | 'select' | 'checkbox' | 'textarea';
-  required: boolean;
-  options: Option[];
-};
+const SurveyItemSchema = z.object({
+  title: z.string().min(1, { message: '항목의 제목을 입력해주세요' }),
+  type: z.enum(['radio', 'select', 'checkbox', 'textarea']),
+  required: z.boolean(),
+  options: z.array(OptionSchema),
+});
 
-export type SurveySection = {
-  title?: string;
-  items: SurveyItem[];
-};
+const SurveySectionSchema = z.object({
+  title: z.string().optional(),
+  items: z.array(SurveyItemSchema),
+});
 
-export type Survey = {
-  title: string;
-  description?: string;
-  sections: SurveySection[];
-};
+const SurveySchema = z.object({
+  title: z.string().min(1, { message: '설문 제목을 입력해주세요' }),
+  description: z.string().optional(),
+  sections: z.array(SurveySectionSchema),
+});
+
+export type Option = z.infer<typeof OptionSchema>;
+export type SurveyItem = z.infer<typeof SurveyItemSchema>;
+export type SurveySection = z.infer<typeof SurveySectionSchema>;
+export type Survey = z.infer<typeof SurveySchema>;
 
 export const useCreateSurvey = () => {
   const { supabase } = useSupabaseContext();
@@ -103,6 +109,7 @@ export const useCreateSurvey = () => {
   };
 
   const mutate = async (payload: Survey) => {
+    SurveySchema.parse(payload);
     const { title, description, sections } = payload;
 
     const survey = await createSurvey(title, description);
