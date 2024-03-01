@@ -7,7 +7,7 @@ const OptionSchema = z.object({
 
 const SurveyItemSchema = z.object({
   title: z.string().min(1, { message: '항목의 제목을 입력해주세요' }),
-  type: z.enum(['radio', 'select', 'checkbox', 'textarea']),
+  type: z.enum(['radio', 'select', 'checkbox']),
   required: z.boolean(),
   options: z.array(OptionSchema),
 });

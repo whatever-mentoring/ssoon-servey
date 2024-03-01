@@ -6,6 +6,7 @@ export const vars = createGlobalTheme(':root', {
     primary200: '#e9e7f7',
     primary500: '#673ab7',
     grayScale00: '#fff',
+    grayScale50: '#f2f3f4',
     grayScale100: '#dadce0',
     grayScale500: '#adb1ba',
     grayScale900: '#202124',
@@ -31,6 +32,15 @@ globalStyle('button', {
   borderRadius: 0,
   border: 'none',
   backgroundColor: 'transparent',
+});
+
+globalStyle('input', {
+  border: 'none',
+  padding: 0,
+  margin: 0,
+});
+globalStyle('input:focus', {
+  outline: 'none',
 });
 
 globalStyle('html, body', {
