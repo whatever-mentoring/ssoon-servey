@@ -1,26 +1,26 @@
 import { useSupabaseContext } from '@ssoon-servey/supabase';
 
-interface Option {
+export type Option = {
   text: string;
-}
+};
 
-interface Item {
+export type SurveyItem = {
   title: string;
   type: 'radio' | 'select' | 'checkbox' | 'textarea';
   required: boolean;
-  options?: Option[];
-}
+  options: Option[];
+};
 
-interface Section {
+export type SurveySection = {
   title?: string;
-  items: Item[];
-}
+  items: SurveyItem[];
+};
 
-export interface Survey {
+export type Survey = {
   title: string;
   description?: string;
-  sections: Section[];
-}
+  sections: SurveySection[];
+};
 
 export const useCreateSurvey = () => {
   const { supabase } = useSupabaseContext();
@@ -33,7 +33,10 @@ export const useCreateSurvey = () => {
     return survey;
   };
 
-  const createSections = async (serveyId: number, sections: Section[]) => {
+  const createSections = async (
+    serveyId: number,
+    sections: SurveySection[]
+  ) => {
     const { data: survey_section } = await supabase
       .from('survey_sections')
       .insert(
@@ -48,7 +51,7 @@ export const useCreateSurvey = () => {
 
   const createSurveyItems = async (
     sectionIds: number[],
-    sections: Section[]
+    sections: SurveySection[]
   ) => {
     const insertItems: {
       section_id: number;
@@ -80,7 +83,7 @@ export const useCreateSurvey = () => {
 
   const createItemOptions = async (
     surveyItemIds: number[],
-    sections: Section[]
+    sections: SurveySection[]
   ) => {
     const insertOptions: { item_id: number; option_text: string }[] = [];
 
