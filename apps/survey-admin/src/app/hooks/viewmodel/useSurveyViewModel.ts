@@ -27,8 +27,9 @@ const newSection = (): SurveySection & { id: number } => ({
 });
 
 const useSurveyViewModel = () => {
+  const [toolbarTop, setToolbarTop] = useState(0);
   const [survey, setSurvey] = useState<Omit<Survey, 'sections'>>({
-    title: '',
+    title: '제목 없는 설문지',
     description: '',
   });
   const [currentActiveItemIndex, setCurrentActiveItemIndex] = useState({
@@ -92,7 +93,8 @@ const useSurveyViewModel = () => {
     }));
   };
 
-  const handleActiveItem = (sectionId: number, itemId: number) => {
+  const handleActiveItem = (sectionId: number, itemId: number, top: number) => {
+    setToolbarTop(top);
     setCurrentActiveItemIndex({ sectionId, itemId });
   };
 
@@ -108,6 +110,30 @@ const useSurveyViewModel = () => {
     );
   };
 
+  const handleChangeItemRequired = (isRequired: boolean) => {
+    const { sectionId, itemId } = currentActiveItemIndex;
+
+    setSurveySections((sections) =>
+      produce(sections, (sections) => {
+        const section = sections[sectionId];
+        const item = section.items[itemId];
+        item.required = isRequired;
+      })
+    );
+  };
+
+  const handleChangeItemType = (type: 'checkbox' | 'radio' | 'select') => {
+    const { sectionId, itemId } = currentActiveItemIndex;
+
+    setSurveySections((sections) =>
+      produce(sections, (sections) => {
+        const section = sections[sectionId];
+        const item = section.items[itemId];
+        item.type = type;
+      })
+    );
+  };
+
   const handleChangeOptionText = (value: string, optionIndex: number) => {
     const { sectionId, itemId } = currentActiveItemIndex;
 
@@ -117,6 +143,17 @@ const useSurveyViewModel = () => {
         const item = section.items[itemId];
         const option = item.options[optionIndex];
         option.text = value;
+      })
+    );
+  };
+
+  const handleDeleteItem = (sectionId: number, itemId: number) => {
+    // const { sectionId, itemId } = currentActiveItemIndex;
+
+    setSurveySections((sections) =>
+      produce(sections, (sections) => {
+        const section = sections[sectionId];
+        section.items = section.items.filter((item, i) => i !== itemId);
       })
     );
   };
@@ -139,9 +176,14 @@ const useSurveyViewModel = () => {
     handleAddOption,
     handleChangeOptionText,
     handleChangeItemTitle,
+    handleChangeItemType,
+    handleChangeItemRequired,
+    handleDeleteItem,
     handleAddItems,
     handleAddSections,
     onSubmit,
+    currentActiveItemIndex,
+    toolbarTop,
   };
 };
 

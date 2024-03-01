@@ -32,10 +32,54 @@ export const borderTop = style({
   right: 0,
 });
 
+export const sectionsContainer = style({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  gap: '70px',
+});
+export const sectionWrapper = style({
+  position: 'relative',
+});
+export const sectionLabel = style({
+  position: 'absolute',
+  top: '-30px',
+  left: 0,
+  padding: '5px 10px',
+  backgroundColor: vars.color.primary500,
+  fontSize: '14px',
+  lineHeight: '20px',
+  color: 'white',
+  borderRadius: '8px 8px 0px 0px',
+});
+export const itemsContainer = style({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  gap: '15px',
+});
+
+export const inputFocusStyle = style({
+  width: '100%',
+  padding: '4px',
+  ':focus': {
+    borderBottom: `2px solid ${vars.color.primary500}`,
+  },
+});
+
+export const surveyTitle = style([
+  inputFocusStyle,
+  {
+    fontSize: '24pt',
+  },
+]);
+export const surveySubTitle = style([inputFocusStyle]);
+
 export const toolbar = style({
   position: 'absolute',
-  top: '106px',
+  top: '0px',
   right: '-50px',
+  transition: 'top .2s ease-in-out',
 });
 
 export const surveyTitleInput = style({});
