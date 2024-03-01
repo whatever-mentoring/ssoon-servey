@@ -18,7 +18,7 @@ const newItem = (): Item => ({
   title: '',
   type: 'radio',
   required: false,
-  options: [{ text: '옵션1' }],
+  options: [{ text: '옵션 1' }],
 });
 const newSection = (): SurveySection & { id: number } => ({
   id: genId(),
@@ -75,7 +75,7 @@ const useSurveyViewModel = () => {
         const section = sections[sectionId];
         const item = section.items[itemId];
         item.options.push({
-          text: 'radio option 1번 째',
+          text: `옵션 ${item.options.length + 1}`,
         });
       })
     );
