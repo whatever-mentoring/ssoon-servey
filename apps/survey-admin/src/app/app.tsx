@@ -1,68 +1,70 @@
-import { Survey, useCreateSurvey } from '../hooks/query/useServey';
+import { borderTop, wrapper, container, cardWrapper, toolbar } from './app.css';
+import { Card } from '@ssoon-servey/shared-ui';
+import ToolBar from './components/ToolBar';
+import SurveyItem from './components/SurveyItem';
+import useSurveyViewModel from './hooks/viewmodel/useSurveyViewModel';
 
-const payload: Survey = {
-  title: '설문입니다.',
-  sections: [
-    {
-      items: [
-        {
-          title: 'radio input 1번째',
-          type: 'radio',
-          required: true,
-          options: [
-            { text: 'radio option1 1번째' },
-            { text: 'radio option2 1번째' },
-            { text: 'radio option3 1번째' },
-          ],
-        },
-        {
-          title: 'checkbox input 1번째',
-          type: 'radio',
-          required: true,
-          options: [
-            { text: 'checkbox option1 1번째' },
-            { text: 'checkbox option2 1번째' },
-            { text: 'checkbox option3 1번째' },
-          ],
-        },
-      ],
-    },
-    {
-      items: [
-        {
-          title: 'select 1번째',
-          type: 'select',
-          required: true,
-          options: [
-            {
-              text: 'select option1 1번째',
-            },
-            {
-              text: 'select option2 1번째',
-            },
-            {
-              text: 'select option3 1번째',
-            },
-          ],
-        },
-        { title: 'select 1번째', type: 'textarea', required: true },
-      ],
-    },
-  ],
-};
+export default function App() {
+  const {
+    survey,
+    handleSurveyInput,
+    surveySections,
+    handleActiveItem,
+    handleAddOption,
+    handleChangeOptionText,
+    handleChangeItemTitle,
+    handleAddItems,
+    handleAddSections,
+    onSubmit,
+  } = useSurveyViewModel();
 
-export function App() {
-  const mutate = useCreateSurvey();
-
-  const onMutateSurvey = () => {
-    mutate(payload);
-  };
   return (
-    <div>
-      <h2>설문 만들기</h2>
-      <button onClick={onMutateSurvey}>제출</button>
+    <div className={container}>
+      <div className={wrapper}>
+        <Card>
+          <div className={cardWrapper}>
+            <div className={borderTop} />
+            <div>
+              <input
+                placeholder="설문지 제목"
+                name="title"
+                value={survey.title}
+                onChange={handleSurveyInput}
+              />
+            </div>
+            <div>
+              <input
+                placeholder="설문지 설명"
+                name="description"
+                value={survey.description}
+                onChange={handleSurveyInput}
+              />
+            </div>
+          </div>
+        </Card>
+        {surveySections.map((section, sectionIndex) => (
+          <div key={sectionIndex}>
+            <div>{`section ${sectionIndex + 1}`}</div>
+            {section.items.map((item, itemIndex) => (
+              <SurveyItem
+                key={`${sectionIndex}_${itemIndex}`}
+                item={item}
+                onActiveItem={() => handleActiveItem(sectionIndex, itemIndex)}
+                onAddOptions={handleAddOption}
+                onChangeOptionText={handleChangeOptionText}
+                onChangeItemTitle={handleChangeItemTitle}
+              />
+            ))}
+          </div>
+        ))}
+        <div className={toolbar}>
+          <ToolBar
+            onAddItems={handleAddItems}
+            onAddSections={handleAddSections}
+          />
+        </div>
+        <button onClick={onSubmit}>제출하기</button>
+      </div>
     </div>
   );
 }
-
-export default App;
