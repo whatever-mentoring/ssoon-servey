@@ -32,6 +32,11 @@ const useSurveyViewModel = () => {
     title: '제목 없는 설문지',
     description: '',
   });
+
+  // 0 0
+  // 0 1
+
+  // 1 0으로 되어야 하는데 현재 1 1
   const [currentActiveItemIndex, setCurrentActiveItemIndex] = useState({
     sectionId: 0,
     itemId: 0,
@@ -87,10 +92,10 @@ const useSurveyViewModel = () => {
     setSurveySections((section) =>
       insertItem(section, nextSectionId, newSection())
     );
-    setCurrentActiveItemIndex((prev) => ({
-      ...prev,
+    setCurrentActiveItemIndex({
+      itemId: 0,
       sectionId: nextSectionId,
-    }));
+    });
   };
 
   const handleActiveItem = (sectionId: number, itemId: number, top: number) => {

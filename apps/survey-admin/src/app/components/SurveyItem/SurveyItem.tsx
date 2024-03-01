@@ -86,10 +86,12 @@ const SurveyItem = ({
             value={item.title}
           />
           <div className={selectBoxContainer}>
-            <select className={selectBox} onChange={handleChangeItemType}>
-              <option value="radio" selected>
-                객관식
-              </option>
+            <select
+              className={selectBox}
+              onChange={handleChangeItemType}
+              defaultValue={'radio'}
+            >
+              <option value="radio">객관식</option>
               <option value="checkbox">체크박스</option>
               <option value="select">드롭다운</option>
             </select>
