@@ -37,7 +37,6 @@ export type Database = {
       };
       survey_items: {
         Row: {
-          hasOption: boolean | null;
           id: number;
           question_required: boolean;
           question_title: string;
@@ -45,7 +44,6 @@ export type Database = {
           section_id: number | null;
         };
         Insert: {
-          hasOption?: boolean | null;
           id?: never;
           question_required: boolean;
           question_title: string;
@@ -53,7 +51,6 @@ export type Database = {
           section_id?: number | null;
         };
         Update: {
-          hasOption?: boolean | null;
           id?: never;
           question_required?: boolean;
           question_title?: string;
@@ -73,19 +70,16 @@ export type Database = {
       survey_sections: {
         Row: {
           id: number;
-          section_id: number | null;
           survey_id: number | null;
           survey_title: string | null;
         };
         Insert: {
           id?: never;
-          section_id?: number | null;
           survey_id?: number | null;
           survey_title?: string | null;
         };
         Update: {
           id?: never;
-          section_id?: number | null;
           survey_id?: number | null;
           survey_title?: string | null;
         };
