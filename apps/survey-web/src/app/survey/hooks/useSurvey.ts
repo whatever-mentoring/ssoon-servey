@@ -4,18 +4,18 @@ import {
 } from '@ssoon-servey/supabase';
 import { useEffect, useState } from 'react';
 
-type Options = {
+export type Options = {
   id: number;
   option_text: string;
   item_id: number | null;
 };
 
-type SurveyItems = {
+export type SurveyItems = {
   id: number;
   options: Options[];
   question_required: boolean;
   question_title: string;
-  question_type: string;
+  question_type: 'radio' | 'select' | 'checkbox';
   section_id: number | null;
 };
 
@@ -76,7 +76,15 @@ const getSurvey = async (supabase: SupabaseContextValue['supabase']) => {
       ...section,
       isNext: i !== sections.length - 1,
       isPrevious: i !== 0,
-      items: items
+      items: (
+        items as {
+          id: number;
+          question_required: boolean;
+          question_title: string;
+          question_type: 'radio' | 'select' | 'checkbox';
+          section_id: number | null;
+        }[]
+      )
         .filter((item) => item.section_id === section.id)
         .map((items) => ({
           ...items,

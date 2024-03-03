@@ -1,8 +1,10 @@
 import { useGetSurvey } from './hooks/useSurvey';
-import { Block, Card } from '@ssoon-servey/shared-ui';
 import * as $ from './page.css';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import SurveyTitle from './components/SurveyTitle';
+import SurveyItem from './components/SurveyItem';
+import SurveyNav from './components/SurveyNav';
 
 const INITIAL_ID = 1;
 
@@ -33,31 +35,32 @@ const SurveyPage = () => {
     navigate(-1);
   };
 
-  const sections = data.sections[sectionId - 1];
+  const onSubmit = () => {
+    navigate('');
+  };
+
+  const section = data.sections[sectionId - 1];
 
   return (
     <div className={$.cardContainer}>
-      <Card>
-        <div className={$.borderTop} />
-        <div className={$.cardWrapper}>
-          <span>{data?.title}</span>
-          <div>* 표시는 필수 질문임</div>
-        </div>
-      </Card>
-      {sections.items.map((item) => (
-        <Card key={item.id}>
-          <div className={$.cardWrapper}>
-            <div>{item.question_title}</div>
-            {item.options.map((option) => (
-              <div key={option.id}>{option.option_text}</div>
-            ))}
-          </div>
-        </Card>
+      <SurveyTitle title={data.title} />
+      {section.items.map((item) => (
+        <SurveyItem
+          key={item.id}
+          type={item.question_type}
+          title={item.question_title}
+          options={item.options}
+          isRequired={item.question_required}
+        />
       ))}
-
       <div>
-        {sections.isPrevious && <button onClick={goBackSection}>이전</button>}
-        {sections.isNext && <button onClick={goNextSection}>다음</button>}
+        <SurveyNav
+          isNext={section.isNext}
+          isPrevious={section.isPrevious}
+          goNext={goNextSection}
+          goBack={goBackSection}
+          onSubmit={onSubmit}
+        />
       </div>
     </div>
   );
