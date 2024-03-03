@@ -61,7 +61,7 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
         .select('id,title,description');
       if (!surveys) return null;
 
-      const _survey = surveys.find((survey) => survey.id === id);
+      const _survey = surveys.find((survey) => survey.id === id)!;
 
       const { data: sections } = await supabase
         .from('survey_sections')
@@ -117,7 +117,7 @@ const useGetSurvey = (id: number): apiState<Survey> => {
 
   useEffect(() => {
     api(supabase)
-      .getSurvey()
+      .getSurvey(id)
       .then((data) => {
         setData(data);
         setIsLoading(false);
@@ -143,7 +143,6 @@ const useGetSurveyList = (): apiState<SurveyList> => {
     api(supabase)
       .getSurveyList()
       .then((data) => {
-        console.log('data', data);
         setData(data);
         setIsLoading(false);
       })
