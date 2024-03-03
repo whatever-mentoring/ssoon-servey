@@ -121,35 +121,22 @@ const CheckboxOptions = ({
     const { value, checked } = e.currentTarget;
     const isError = checked ? false : validate(type, formValue);
 
-    if (!formValue) {
-      onChangeForm({
-        itemId,
-        type,
-        required,
-        value: [value],
-        error: isError,
-      });
-      return;
-    }
+    let checkboxValue = [];
     if (typeof formValue === 'string') return;
-
-    if (checked) {
-      onChangeForm({
-        itemId,
-        type,
-        required,
-        value: [...formValue, value],
-        error: isError,
-      });
+    if (!formValue) {
+      checkboxValue = [value];
+    } else if (checked) {
+      checkboxValue = [...formValue, value];
     } else {
-      onChangeForm({
-        itemId,
-        type,
-        required,
-        value: formValue.filter((_value) => _value !== value),
-        error: isError,
-      });
+      checkboxValue = formValue.filter((_value) => _value !== value);
     }
+    onChangeForm({
+      itemId,
+      type,
+      required,
+      value: checkboxValue,
+      error: isError,
+    });
   };
   return (
     <>
