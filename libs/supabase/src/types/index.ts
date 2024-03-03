@@ -9,6 +9,84 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      answer: {
+        Row: {
+          created_at: string;
+          id: number;
+          submitted_at: string | null;
+          survey_id: number;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          submitted_at?: string | null;
+          survey_id: number;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          submitted_at?: string | null;
+          survey_id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'public_answer_survey_id_fkey';
+            columns: ['survey_id'];
+            isOneToOne: false;
+            referencedRelation: 'surveys';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
+      answer_rel: {
+        Row: {
+          answer_id: number;
+          created_at: string;
+          items_id: number;
+          options_id: number | null;
+          submitted_at: string | null;
+          text: string | null;
+        };
+        Insert: {
+          answer_id?: number;
+          created_at?: string;
+          items_id: number;
+          options_id?: number | null;
+          submitted_at?: string | null;
+          text?: string | null;
+        };
+        Update: {
+          answer_id?: number;
+          created_at?: string;
+          items_id?: number;
+          options_id?: number | null;
+          submitted_at?: string | null;
+          text?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'public_answer_rel_answer_id_fkey';
+            columns: ['answer_id'];
+            isOneToOne: false;
+            referencedRelation: 'answer';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'public_answer_rel_items_id_fkey';
+            columns: ['items_id'];
+            isOneToOne: false;
+            referencedRelation: 'survey_items';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'public_answer_rel_options_id_fkey';
+            columns: ['options_id'];
+            isOneToOne: false;
+            referencedRelation: 'question_options';
+            referencedColumns: ['id'];
+          }
+        ];
+      };
       question_options: {
         Row: {
           id: number;
@@ -95,16 +173,19 @@ export type Database = {
       };
       surveys: {
         Row: {
+          created_at: string | null;
           description: string | null;
           id: number;
           title: string;
         };
         Insert: {
+          created_at?: string | null;
           description?: string | null;
           id?: never;
           title: string;
         };
         Update: {
+          created_at?: string | null;
           description?: string | null;
           id?: never;
           title?: string;
