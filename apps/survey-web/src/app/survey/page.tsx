@@ -1,23 +1,19 @@
 import { useGetSurvey } from './hooks/useSurvey';
 import * as $ from './page.css';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import SurveyTitle from './components/SurveyTitle';
 import SurveyItem from './components/SurveyItem';
 import SurveyNav from './components/SurveyNav';
 
-const INITIAL_ID = 1;
-
 const SurveyPage = () => {
-  const { data, isError, isLoading } = useGetSurvey();
   const { id } = useParams();
-  const sectionId = Number(id);
+  const [searchParams] = useSearchParams();
+  const surveyId = Number(id);
+  const page = searchParams.get('page');
+  const pageNumber = page ? Number(page) : 1;
+  const { data, isError, isLoading } = useGetSurvey(surveyId);
 
   const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate(`/survey/${INITIAL_ID}`, { replace: true });
-  }, []);
 
   if (isError) {
     return <div>error</div>;
@@ -27,8 +23,12 @@ const SurveyPage = () => {
     return <div>loading...</div>;
   }
 
+  const section = data.sections.filter(
+    (section) => section.survey_id === surveyId
+  )[pageNumber - 1];
+
   const goNextSection = () => {
-    navigate(`/survey/${sectionId + 1}`);
+    navigate(`/survey/${surveyId}?page=${pageNumber + 1}`);
   };
 
   const goBackSection = () => {
@@ -38,8 +38,6 @@ const SurveyPage = () => {
   const onSubmit = () => {
     navigate('');
   };
-
-  const section = data.sections[sectionId - 1];
 
   return (
     <div className={$.cardContainer}>

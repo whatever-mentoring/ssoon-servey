@@ -37,7 +37,7 @@ const RadioOptions = ({ options }: { options: Options[] }) => {
   return (
     <>
       {options.map((option) => (
-        <div key={option.item_id} className={$.optionContainer}>
+        <div key={option.id} className={$.optionContainer}>
           <label className={$.optionWrapper}>
             <Radio value={option.option_text} name={option.option_text} />
             <span>{option.option_text}</span>
@@ -52,7 +52,7 @@ const CheckboxOptions = ({ options }: { options: Options[] }) => {
   return (
     <>
       {options.map((option) => (
-        <div key={option.item_id} className={$.optionContainer}>
+        <div key={option.id} className={$.optionContainer}>
           <label className={$.optionWrapper}>
             <Checkbox value={option.option_text} name={option.option_text} />
             <span>{option.option_text}</span>
@@ -66,9 +66,10 @@ const CheckboxOptions = ({ options }: { options: Options[] }) => {
 const SelectOptions = ({ options }: { options: Options[] }) => {
   return (
     <div className={$.selectBox}>
-      <select className={$.select}>
+      <select className={$.select} value={undefined}>
+        <option value={undefined}>선택</option>
         {options.map((option) => (
-          <option key={option.id} value={option.option_text} selected={false}>
+          <option key={option.id} value={option.option_text}>
             {option.option_text}
           </option>
         ))}
