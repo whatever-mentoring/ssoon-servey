@@ -23,7 +23,7 @@ import { itemsType } from '../../types/items.type';
 interface SurveyItemProps {
   item: SurveyItem;
   isActive: boolean;
-  onActiveItem: (top: number) => void;
+  onActiveItem: () => void;
   onAddOptions: () => void;
   onChangeOptionText: (value: string, optionIndex: number) => void;
   onChangeItemType: (type: itemsType) => void;
@@ -48,9 +48,7 @@ const SurveyItem = ({
     onAddOptions();
   };
   const handleActiveItem = () => {
-    if (!cardRef.current) return;
-    const { top } = cardRef.current.getBoundingClientRect();
-    onActiveItem(top + window.scrollY);
+    onActiveItem();
   };
   const handleItemsTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.currentTarget;
@@ -102,7 +100,7 @@ const SurveyItem = ({
         <div className={optionContainer}>
           {item.type !== 'textarea' && (
             <>
-              {item.options.map((option, i) => (
+              {item.options?.map((option, i) => (
                 <div key={i} className={optionWrapper}>
                   {item.type === 'checkbox' && <Checkbox disabled />}
                   {item.type === 'radio' && <Radio disabled />}

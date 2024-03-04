@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   type SurveySection,
   type Survey,
@@ -28,15 +28,11 @@ const newSection = (): SurveySection & { id: number } => ({
 });
 
 const useSurveyViewModel = () => {
-  const [toolbarTop, setToolbarTop] = useState(0);
   const [survey, setSurvey] = useState<Omit<Survey, 'sections'>>({
     title: '제목 없는 설문지',
     description: '',
   });
 
-  // 0 0
-  // 0 1
-  // 1 0으로 되어야 하는데 현재 1 1
   const [currentActiveItemIndex, setCurrentActiveItemIndex] = useState({
     sectionId: 0,
     itemId: 0,
@@ -100,8 +96,7 @@ const useSurveyViewModel = () => {
     });
   };
 
-  const handleActiveItem = (sectionId: number, itemId: number, top: number) => {
-    setToolbarTop(top);
+  const handleActiveItem = (sectionId: number, itemId: number) => {
     setCurrentActiveItemIndex({ sectionId, itemId });
   };
 
@@ -179,7 +174,9 @@ const useSurveyViewModel = () => {
         items: section.items,
       })),
     });
+    window.location.reload();
   };
+
   return {
     survey,
     handleSurveyInput,
@@ -195,7 +192,6 @@ const useSurveyViewModel = () => {
     handleAddSections,
     onSubmit,
     currentActiveItemIndex,
-    toolbarTop,
   };
 };
 
