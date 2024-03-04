@@ -8,6 +8,7 @@ import {
 import { insertItem } from '@ssoon-servey/utils';
 import { useState } from 'react';
 import { produce } from 'immer';
+import { itemsType } from '../../types/items.type';
 
 let id = 0;
 const genId = () => {
@@ -35,7 +36,6 @@ const useSurveyViewModel = () => {
 
   // 0 0
   // 0 1
-
   // 1 0으로 되어야 하는데 현재 1 1
   const [currentActiveItemIndex, setCurrentActiveItemIndex] = useState({
     sectionId: 0,
@@ -79,9 +79,11 @@ const useSurveyViewModel = () => {
       produce(sections, (sections) => {
         const section = sections[sectionId];
         const item = section.items[itemId];
-        item.options.push({
-          text: `옵션 ${item.options.length + 1}`,
-        });
+        if (item.options) {
+          item.options.push({
+            text: `옵션 ${item.options.length + 1}`,
+          });
+        }
       })
     );
   };
@@ -127,7 +129,7 @@ const useSurveyViewModel = () => {
     );
   };
 
-  const handleChangeItemType = (type: 'checkbox' | 'radio' | 'select') => {
+  const handleChangeItemType = (type: itemsType) => {
     const { sectionId, itemId } = currentActiveItemIndex;
 
     setSurveySections((sections) =>
@@ -135,6 +137,9 @@ const useSurveyViewModel = () => {
         const section = sections[sectionId];
         const item = section.items[itemId];
         item.type = type;
+        if (item.type === 'textarea') {
+          item.options = null;
+        }
       })
     );
   };
@@ -146,8 +151,10 @@ const useSurveyViewModel = () => {
       produce(sections, (sections) => {
         const section = sections[sectionId];
         const item = section.items[itemId];
-        const option = item.options[optionIndex];
-        option.text = value;
+        if (item.options) {
+          const option = item.options[optionIndex];
+          option.text = value;
+        }
       })
     );
   };
