@@ -121,9 +121,11 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
       return surveys;
     },
     async getSurveyAnswers() {
+      const answerId = 1;
       const { data: answers, error: answerError } = await supabase
         .from('answer_rel')
-        .select('*');
+        .select('*')
+        .eq('answer_id', answerId);
       if (answerError) throw answerError;
 
       const textList = answers
@@ -160,16 +162,19 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
           '',
       }));
     },
-    async postSurveyAnswer({
+
+    async postSurveyAnswers({
       surveyId,
       itemId,
       text,
       optionsId,
     }: AnswerParams) {
+      const _answerId = 1;
       const { data: answerId } = await supabase
         .from('answer')
         .select(`id`)
         .eq('survey_id', surveyId)
+        .eq('id', _answerId)
         .single();
 
       const { data: answer, error: answerError } = await supabase
@@ -311,10 +316,10 @@ const useGetSurveyAnswer = (pageNumber?: number): apiState<Answer[]> => {
   return { data, isLoading, isError } as apiState<Answer[]>;
 };
 
-const usePostSurveyAnswer = () => {
+const usePostSurveyAnswers = () => {
   const { supabase } = useSupabaseContext();
   const mutate = (params: AnswerParams) => {
-    return api(supabase).postSurveyAnswer(params);
+    return api(supabase).postSurveyAnswers(params);
   };
   return [mutate];
 };
@@ -330,6 +335,6 @@ export {
   useGetSurvey,
   useGetSurveyList,
   useGetSurveyAnswer,
-  usePostSurveyAnswer,
+  usePostSurveyAnswers,
   useDeleteSurveyAnswer,
 };

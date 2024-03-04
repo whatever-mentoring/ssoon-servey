@@ -16,6 +16,9 @@ export const validate = (
       if (!value) {
         return true;
       }
+      if (!value[0]) {
+        return true;
+      }
       return false;
   }
 };

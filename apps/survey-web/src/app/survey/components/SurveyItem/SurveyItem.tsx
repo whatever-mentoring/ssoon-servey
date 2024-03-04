@@ -1,4 +1,4 @@
-import { Options, usePostSurveyAnswer } from '../../hooks/api/useSurvey';
+import { Options, usePostSurveyAnswers } from '../../hooks/api/useSurvey';
 import { Block, Card, Checkbox, Radio } from '@ssoon-servey/shared-ui';
 import * as $ from './SurveyItem.css';
 import { useSurveyFormContext } from '../../hooks/useSurveyFormContext';
@@ -83,7 +83,7 @@ const RadioOptions = ({
 }) => {
   const { surveyFormValue, onChangeForm } = useSurveyFormContext();
   const { surveyId } = usePageValue();
-  const [mutate] = usePostSurveyAnswer();
+  const [mutate] = usePostSurveyAnswers();
   const formValue = surveyFormValue?.[itemId]?.value;
   const handleChangeRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, dataset } = e.currentTarget;
@@ -131,7 +131,7 @@ const CheckboxOptions = ({
   const { surveyFormValue, onChangeForm } = useSurveyFormContext();
   const checkboxesRef = useRef<(HTMLInputElement | null)[]>([]);
   const { surveyId } = usePageValue();
-  const [mutate] = usePostSurveyAnswer();
+  const [mutate] = usePostSurveyAnswers();
   const formValue = surveyFormValue?.[itemId]?.value;
 
   const handleChangeCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -200,7 +200,7 @@ const SelectOptions = ({
 }) => {
   const { surveyFormValue, onChangeForm } = useSurveyFormContext();
   const { surveyId } = usePageValue();
-  const [mutate] = usePostSurveyAnswer();
+  const [mutate] = usePostSurveyAnswers();
   const formValue = surveyFormValue?.[itemId]?.value;
 
   const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -252,7 +252,7 @@ const TextAreaOptions = ({
 }) => {
   const { surveyFormValue, onChangeForm } = useSurveyFormContext();
   const { surveyId } = usePageValue();
-  const [mutate] = usePostSurveyAnswer();
+  const [mutate] = usePostSurveyAnswers();
   const formValue = surveyFormValue?.[itemId]?.value;
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
