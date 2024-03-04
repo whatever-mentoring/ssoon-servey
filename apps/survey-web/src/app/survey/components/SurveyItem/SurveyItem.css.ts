@@ -46,3 +46,16 @@ export const select = style({
   outline: 0,
   padding: '6px',
 });
+
+// TextAreaOptions
+export const textArea = style({
+  border: 0,
+  resize: 'none',
+  width: '100%',
+  borderBottom: `1px solid ${vars.color.grayScale100}`,
+  padding: '3px',
+  ':focus': {
+    outline: 'none',
+    borderBottom: `1px solid ${vars.color.primary500}`,
+  },
+});
