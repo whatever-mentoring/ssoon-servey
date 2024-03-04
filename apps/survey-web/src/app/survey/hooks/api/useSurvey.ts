@@ -3,6 +3,7 @@ import {
   useSupabaseContext,
 } from '@ssoon-servey/supabase';
 import { useEffect, useState } from 'react';
+import { itemsType } from '../../types/items.type';
 
 export type Options = {
   id: number;
@@ -15,7 +16,7 @@ export type SurveyItems = {
   options: Options[];
   question_required: boolean;
   question_title: string;
-  question_type: 'radio' | 'select' | 'checkbox';
+  question_type: itemsType;
   section_id: number | null;
 };
 
@@ -37,9 +38,8 @@ type Survey = {
 };
 
 type Answer = {
-  id: number;
-  item_id: number | null;
-  option_text: string;
+  item_id: number;
+  value: string;
 };
 
 type AnswerParams = {
@@ -100,7 +100,7 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
               id: number;
               question_required: boolean;
               question_title: string;
-              question_type: 'radio' | 'select' | 'checkbox';
+              question_type: itemsType;
               section_id: number | null;
             }[]
           )
@@ -125,6 +125,10 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
         .select('*');
       if (answerError) throw answerError;
 
+      const textList = answers
+        .filter((answer) => answer.text)
+        .map((answer) => ({ item_id: answer.items_id, value: answer.text! }));
+
       const { data: options, error } = await supabase
         .from('question_options')
         .select('*')
@@ -132,9 +136,16 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
 
       if (error) throw error;
 
-      return options.filter((option) =>
-        answers.some((answer) => answer.options_id === option.id)
-      );
+      const optionList = options
+        .filter((option) =>
+          answers.some((answer) => answer.options_id === option.id)
+        )
+        .map((option) => ({
+          item_id: option.item_id!,
+          value: option.option_text,
+        }));
+
+      return textList.concat(optionList);
     },
     async postSurveyAnswer({
       surveyId,
@@ -183,7 +194,7 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
           answer_id: answer.id,
           items_id: itemId,
           options_id: optionsId ?? null,
-          text: text,
+          text: text ?? null,
         });
       }
     },

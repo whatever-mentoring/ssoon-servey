@@ -74,8 +74,10 @@ const SectionBottomNav = ({ isPrevious, isNext }: SectionBottomNav) => {
     const { form, errorCount } = sectionFormErrorCheck(surveyFormValue);
     setSurveyFormValue(form);
     if (errorCount > 0) {
+      console.log('error');
       return;
     } else {
+      console.log('제출');
       return;
     }
   };

@@ -6,6 +6,7 @@ import SurveyBottomNav from './components/SurveyBottomNav';
 import usePageValue from './hooks/usePageValue';
 import { useEffect, useMemo, useState } from 'react';
 import { SurveyForm, SurveyFormContext } from './hooks/useSurveyFormContext';
+import { itemsType } from './types/items.type';
 
 const SurveyPage = () => {
   const { surveyId, pageNumber } = usePageValue();
@@ -26,7 +27,7 @@ const SurveyPage = () => {
 
       const answerValue = answers
         ?.filter((answer) => answer.item_id === id)
-        .map((answer) => answer.option_text);
+        .map((answer) => answer.value);
 
       obj[id] = {
         value: answerValue ?? surveyFormValue?.[id]?.value,
@@ -54,7 +55,7 @@ const SurveyPage = () => {
       }: {
         value: string | string[];
         itemId: number;
-        type: 'radio' | 'select' | 'checkbox';
+        type: itemsType;
         required: boolean;
         error: boolean;
       }) => {

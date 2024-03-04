@@ -5,6 +5,7 @@ import { useSurveyFormContext } from '../../hooks/useSurveyFormContext';
 import { validate } from '../../utils/validate';
 import usePageValue from '../../hooks/usePageValue';
 import { useRef } from 'react';
+import { itemsType } from '../../types/items.type';
 
 const SurveyItem = ({
   title,
@@ -15,7 +16,7 @@ const SurveyItem = ({
 }: {
   title: string;
   itemId: number;
-  type: 'radio' | 'select' | 'checkbox';
+  type: itemsType;
   options: Options[];
   isRequired: boolean;
 }) => {
@@ -54,6 +55,13 @@ const SurveyItem = ({
               required={isRequired}
             />
           )}
+          {type === 'textarea' && (
+            <TextAreaOptions
+              itemId={itemId}
+              type={type}
+              required={isRequired}
+            />
+          )}
         </div>
       </div>
     </Card>
@@ -69,7 +77,7 @@ const RadioOptions = ({
   itemId,
 }: {
   options: Options[];
-  type: 'radio' | 'select' | 'checkbox';
+  type: itemsType;
   required: boolean;
   itemId: number;
 }) => {
@@ -116,7 +124,7 @@ const CheckboxOptions = ({
   itemId,
 }: {
   options: Options[];
-  type: 'radio' | 'select' | 'checkbox';
+  type: itemsType;
   required: boolean;
   itemId: number;
 }) => {
@@ -156,8 +164,6 @@ const CheckboxOptions = ({
       [] as number[]
     );
 
-    console.log('checkedOptionIds', checkedOptionIds);
-
     mutate({ surveyId, itemId, optionsId: checkedOptionIds });
   };
   return (
@@ -188,7 +194,7 @@ const SelectOptions = ({
   itemId,
 }: {
   options: Options[];
-  type: 'radio' | 'select' | 'checkbox';
+  type: itemsType;
   required: boolean;
   itemId: number;
 }) => {
@@ -196,7 +202,6 @@ const SelectOptions = ({
   const { surveyId } = usePageValue();
   const [mutate] = usePostSurveyAnswer();
   const formValue = surveyFormValue?.[itemId]?.value;
-  console.log('formValue', formValue);
 
   const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value, selectedOptions } = e.currentTarget;
@@ -232,6 +237,48 @@ const SelectOptions = ({
           </option>
         ))}
       </select>
+    </div>
+  );
+};
+
+const TextAreaOptions = ({
+  type,
+  required,
+  itemId,
+}: {
+  type: itemsType;
+  required: boolean;
+  itemId: number;
+}) => {
+  const { surveyFormValue, onChangeForm } = useSurveyFormContext();
+  const { surveyId } = usePageValue();
+  const [mutate] = usePostSurveyAnswer();
+  const formValue = surveyFormValue?.[itemId]?.value;
+
+  const handleChangeInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = e.currentTarget;
+    onChangeForm({
+      itemId,
+      type,
+      required,
+      value: [value],
+      error: validate(type, value),
+    });
+    mutate({
+      surveyId,
+      itemId,
+      text: value,
+    });
+  };
+
+  return (
+    <div>
+      <textarea
+        className={$.textArea}
+        rows={1}
+        onChange={handleChangeInput}
+        value={formValue?.[0] ?? ''}
+      />
     </div>
   );
 };

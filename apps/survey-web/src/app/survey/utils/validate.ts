@@ -1,5 +1,7 @@
+import { itemsType } from '../types/items.type';
+
 export const validate = (
-  type: 'radio' | 'select' | 'checkbox',
+  type: itemsType,
   value: string | string[] | undefined
 ) => {
   switch (type) {
@@ -8,6 +10,7 @@ export const validate = (
       if (!value) return true;
       if (value.length > 0) return false;
       return true;
+    case 'textarea':
     case 'select':
     case 'radio':
       if (!value) {

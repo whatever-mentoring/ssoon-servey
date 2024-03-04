@@ -1,11 +1,12 @@
 import { createContext, useContext } from 'react';
+import { itemsType } from '../types/items.type';
 
 export type SurveyForm =
   | {
       // itemId
       [key: string]: {
         value?: string[];
-        type: 'radio' | 'select' | 'checkbox';
+        type: itemsType;
         required: boolean;
         error: boolean;
       };
@@ -24,7 +25,7 @@ export type SurveyFormContextValue = {
   }: {
     value: string | string[];
     itemId: number;
-    type: 'radio' | 'select' | 'checkbox';
+    type: itemsType;
     required: boolean;
     error: boolean;
   }) => void;
