@@ -39,6 +39,7 @@ type Survey = {
 
 type Answer = {
   item_id: number;
+  item_title: string;
   value: string;
 };
 
@@ -145,7 +146,19 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
           value: option.option_text,
         }));
 
-      return textList.concat(optionList);
+      const answersList = textList.concat(optionList);
+
+      const { data: items } = await supabase
+        .from('survey_items')
+        .select('*')
+        .in('id', answers?.map((answer) => answer.items_id) ?? []);
+
+      return answersList.map((answer) => ({
+        ...answer,
+        item_title:
+          items?.find((item) => item.id === answer.item_id)?.question_title ??
+          '',
+      }));
     },
     async postSurveyAnswer({
       surveyId,
@@ -208,16 +221,19 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
         .eq('survey_id', surveyId)
         .single();
 
-      const { data: answer, error: answerError } = await supabase
+      const { error: answerError } = await supabase
         .from('answer')
         .upsert({ id: answerId?.id, survey_id: surveyId })
         .select('*')
         .single();
 
       if (answerError) throw answerError;
-      if (!answer) return;
 
-      await supabase.from('answer_rel').delete().eq('items_id', itemId);
+      const { error: answerRelError } = await supabase
+        .from('answer_rel')
+        .delete()
+        .eq('items_id', itemId);
+      if (answerRelError) throw answerRelError;
     },
   };
 };
@@ -271,7 +287,7 @@ const useGetSurveyList = (): apiState<SurveyList> => {
   return { data, isLoading, isError } as apiState<SurveyList>;
 };
 
-const useGetSurveyAnswer = (pageNumber: number): apiState<Answer[]> => {
+const useGetSurveyAnswer = (pageNumber?: number): apiState<Answer[]> => {
   const { supabase } = useSupabaseContext();
   const [data, setData] = useState<Answer[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);

@@ -60,23 +60,21 @@ const SectionBottomNav = ({ isPrevious, isNext }: SectionBottomNav) => {
         error: false,
         value: undefined,
       };
-
       mutate({
         surveyId,
         itemId: Number(itemId),
       });
     }
     setSurveyFormValue(form);
-    // mutate()
   };
 
   const onSubmit = () => {
     const { form, errorCount } = sectionFormErrorCheck(surveyFormValue);
     setSurveyFormValue(form);
     if (errorCount > 0) {
-      console.log('error');
       return;
     } else {
+      navigate(`/complete/${surveyId}`);
       console.log('제출');
       return;
     }
