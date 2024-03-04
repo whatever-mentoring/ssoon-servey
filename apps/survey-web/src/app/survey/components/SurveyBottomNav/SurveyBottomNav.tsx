@@ -6,6 +6,7 @@ import {
   useSurveyFormContext,
 } from '../../hooks/useSurveyFormContext';
 import { validate } from '../../utils/validate';
+import { useDeleteSurveyAnswer } from '../../hooks/api/useSurvey';
 
 const sectionFormErrorCheck = (surveyFormValue: SurveyForm) => {
   let errorCount = 0;
@@ -30,6 +31,7 @@ interface SectionBottomNav {
 }
 const SectionBottomNav = ({ isPrevious, isNext }: SectionBottomNav) => {
   const { surveyId, pageNumber } = usePageValue();
+  const [mutate] = useDeleteSurveyAnswer();
   const { surveyFormValue, setSurveyFormValue } = useSurveyFormContext();
   const navigate = useNavigate();
 
@@ -49,6 +51,7 @@ const SectionBottomNav = ({ isPrevious, isNext }: SectionBottomNav) => {
 
   const onReset = () => {
     if (!surveyFormValue) return;
+
     const form: SurveyForm = {};
     for (const itemId in surveyFormValue) {
       const surveyForm = surveyFormValue[itemId];
@@ -57,8 +60,14 @@ const SectionBottomNav = ({ isPrevious, isNext }: SectionBottomNav) => {
         error: false,
         value: undefined,
       };
+
+      mutate({
+        surveyId,
+        itemId: Number(itemId),
+      });
     }
     setSurveyFormValue(form);
+    // mutate()
   };
 
   const onSubmit = () => {

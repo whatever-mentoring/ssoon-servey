@@ -11,7 +11,6 @@ const SurveyPage = () => {
   const { surveyId, pageNumber } = usePageValue();
   const { data, isError, isLoading } = useGetSurvey(surveyId);
   const { data: answers } = useGetSurveyAnswer(pageNumber);
-  // console.log('answers : ', answers);
 
   const [surveyFormValue, setSurveyFormValue] = useState<SurveyForm>(undefined);
   const section = data?.sections.filter(

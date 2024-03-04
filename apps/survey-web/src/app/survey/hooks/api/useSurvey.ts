@@ -163,14 +163,20 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
         .eq('items_id', itemId);
 
       if (Array.isArray(optionsId)) {
-        await supabase.from('answer_rel').delete().eq('items_id', itemId);
-        await supabase.from('answer_rel').insert(
-          optionsId.map((optionId) => ({
+        const answerRel = optionsId.map((optionId) => ({
+          answer_id: answer.id,
+          items_id: itemId,
+          options_id: optionId as number | null,
+        }));
+        if (optionsId.length === 0) {
+          answerRel.push({
             answer_id: answer.id,
             items_id: itemId,
-            options_id: optionId,
-          }))
-        );
+            options_id: null,
+          });
+        }
+        await supabase.from('answer_rel').delete().eq('items_id', itemId);
+        await supabase.from('answer_rel').insert(answerRel);
       } else {
         await supabase.from('answer_rel').upsert({
           id: answerRelId?.[0]?.id,
@@ -180,6 +186,27 @@ const api = (supabase: SupabaseContextValue['supabase']) => {
           text: text,
         });
       }
+    },
+    async deleteSurveyAnswer({
+      surveyId,
+      itemId,
+    }: Pick<AnswerParams, 'surveyId' | 'itemId'>) {
+      const { data: answerId } = await supabase
+        .from('answer')
+        .select(`id`)
+        .eq('survey_id', surveyId)
+        .single();
+
+      const { data: answer, error: answerError } = await supabase
+        .from('answer')
+        .upsert({ id: answerId?.id, survey_id: surveyId })
+        .select('*')
+        .single();
+
+      if (answerError) throw answerError;
+      if (!answer) return;
+
+      await supabase.from('answer_rel').delete().eq('items_id', itemId);
     },
   };
 };
@@ -197,7 +224,6 @@ const useGetSurvey = (id: number): apiState<Survey> => {
       setIsLoading(false);
     } catch {
       setIsError(true);
-      setIsLoading(false);
     }
   };
 
@@ -265,10 +291,18 @@ const usePostSurveyAnswer = () => {
   };
   return [mutate];
 };
+const useDeleteSurveyAnswer = () => {
+  const { supabase } = useSupabaseContext();
+  const mutate = (params: Pick<AnswerParams, 'surveyId' | 'itemId'>) => {
+    return api(supabase).deleteSurveyAnswer(params);
+  };
+  return [mutate];
+};
 
 export {
   useGetSurvey,
   useGetSurveyList,
   useGetSurveyAnswer,
   usePostSurveyAnswer,
+  useDeleteSurveyAnswer,
 };

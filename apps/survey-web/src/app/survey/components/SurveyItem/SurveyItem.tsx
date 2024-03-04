@@ -156,6 +156,8 @@ const CheckboxOptions = ({
       [] as number[]
     );
 
+    console.log('checkedOptionIds', checkedOptionIds);
+
     mutate({ surveyId, itemId, optionsId: checkedOptionIds });
   };
   return (
@@ -193,7 +195,8 @@ const SelectOptions = ({
   const { surveyFormValue, onChangeForm } = useSurveyFormContext();
   const { surveyId } = usePageValue();
   const [mutate] = usePostSurveyAnswer();
-  const formValue = surveyFormValue?.[itemId]?.value ?? '';
+  const formValue = surveyFormValue?.[itemId]?.value;
+  console.log('formValue', formValue);
 
   const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value, selectedOptions } = e.currentTarget;
@@ -215,7 +218,7 @@ const SelectOptions = ({
     <div className={$.selectBox}>
       <select
         className={$.select}
-        value={formValue[0]}
+        value={formValue?.[0] ?? ''}
         onChange={handleChangeSelect}
       >
         <option value={''}>선택</option>
