@@ -1,5 +1,6 @@
 import { useSupabaseContext } from '@ssoon-servey/supabase';
 import { z } from 'zod';
+import { itemsType } from '../../types/items.type';
 
 const OptionSchema = z.object({
   text: z.string().min(1, { message: '텍스트를 입력해주세요' }),
@@ -7,9 +8,9 @@ const OptionSchema = z.object({
 
 const SurveyItemSchema = z.object({
   title: z.string().min(1, { message: '항목의 제목을 입력해주세요' }),
-  type: z.enum(['radio', 'select', 'checkbox']),
+  type: z.enum(['radio', 'select', 'checkbox', 'textarea']),
   required: z.boolean(),
-  options: z.array(OptionSchema),
+  options: z.array(OptionSchema).nullable(),
 });
 
 const SurveySectionSchema = z.object({
@@ -62,9 +63,8 @@ export const useCreateSurvey = () => {
     const insertItems: {
       section_id: number;
       question_title: string;
-      question_type: 'radio' | 'select' | 'checkbox' | 'textarea';
+      question_type: itemsType;
       question_required: boolean;
-      hasOption: boolean;
     }[] = [];
 
     sectionIds.forEach((id, i) => {
@@ -74,7 +74,6 @@ export const useCreateSurvey = () => {
           question_title: item.title,
           question_type: item.type,
           question_required: item.required,
-          hasOption: !!item.options,
         })
       );
     });

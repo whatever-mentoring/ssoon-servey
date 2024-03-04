@@ -18,14 +18,15 @@ import {
 } from './SurveyItem.css';
 import { type SurveyItem } from '../../hooks/query/useServey';
 import { useRef } from 'react';
+import { itemsType } from '../../types/items.type';
 
 interface SurveyItemProps {
   item: SurveyItem;
   isActive: boolean;
-  onActiveItem: (top: number) => void;
+  onActiveItem: () => void;
   onAddOptions: () => void;
   onChangeOptionText: (value: string, optionIndex: number) => void;
-  onChangeItemType: (type: 'checkbox' | 'radio' | 'select') => void;
+  onChangeItemType: (type: itemsType) => void;
   onChangeItemTitle: (value: string) => void;
   onChangeItemRequired: (isRequired: boolean) => void;
   onDeleteItem: () => void;
@@ -47,9 +48,7 @@ const SurveyItem = ({
     onAddOptions();
   };
   const handleActiveItem = () => {
-    if (!cardRef.current) return;
-    const { top } = cardRef.current.getBoundingClientRect();
-    onActiveItem(top + window.scrollY);
+    onActiveItem();
   };
   const handleItemsTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.currentTarget;
@@ -64,7 +63,7 @@ const SurveyItem = ({
   };
   const handleChangeItemType = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.currentTarget;
-    onChangeItemType(value as 'radio' | 'select' | 'checkbox');
+    onChangeItemType(value as itemsType);
   };
   const handleItemRequiredChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = e.currentTarget;
@@ -91,6 +90,7 @@ const SurveyItem = ({
               onChange={handleChangeItemType}
               defaultValue={'radio'}
             >
+              <option value="textarea">단답형</option>
               <option value="radio">객관식</option>
               <option value="checkbox">체크박스</option>
               <option value="select">드롭다운</option>
@@ -98,9 +98,9 @@ const SurveyItem = ({
           </div>
         </div>
         <div className={optionContainer}>
-          {
+          {item.type !== 'textarea' && (
             <>
-              {item.options.map((option, i) => (
+              {item.options?.map((option, i) => (
                 <div key={i} className={optionWrapper}>
                   {item.type === 'checkbox' && <Checkbox disabled />}
                   {item.type === 'radio' && <Radio disabled />}
@@ -118,7 +118,12 @@ const SurveyItem = ({
                 옵션추가
               </button>
             </>
-          }
+          )}
+          {item.type === 'textarea' && (
+            <div>
+              <input placeholder="단답형 텍스트" disabled />
+            </div>
+          )}
         </div>
         <div className={itemFooterContainer}>
           <div className={itemFooterWrapper}>

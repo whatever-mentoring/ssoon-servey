@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   type SurveySection,
   type Survey,
@@ -8,6 +8,7 @@ import {
 import { insertItem } from '@ssoon-servey/utils';
 import { useState } from 'react';
 import { produce } from 'immer';
+import { itemsType } from '../../types/items.type';
 
 let id = 0;
 const genId = () => {
@@ -27,16 +28,11 @@ const newSection = (): SurveySection & { id: number } => ({
 });
 
 const useSurveyViewModel = () => {
-  const [toolbarTop, setToolbarTop] = useState(0);
   const [survey, setSurvey] = useState<Omit<Survey, 'sections'>>({
     title: '제목 없는 설문지',
     description: '',
   });
 
-  // 0 0
-  // 0 1
-
-  // 1 0으로 되어야 하는데 현재 1 1
   const [currentActiveItemIndex, setCurrentActiveItemIndex] = useState({
     sectionId: 0,
     itemId: 0,
@@ -79,9 +75,11 @@ const useSurveyViewModel = () => {
       produce(sections, (sections) => {
         const section = sections[sectionId];
         const item = section.items[itemId];
-        item.options.push({
-          text: `옵션 ${item.options.length + 1}`,
-        });
+        if (item.options) {
+          item.options.push({
+            text: `옵션 ${item.options.length + 1}`,
+          });
+        }
       })
     );
   };
@@ -98,8 +96,7 @@ const useSurveyViewModel = () => {
     });
   };
 
-  const handleActiveItem = (sectionId: number, itemId: number, top: number) => {
-    setToolbarTop(top);
+  const handleActiveItem = (sectionId: number, itemId: number) => {
     setCurrentActiveItemIndex({ sectionId, itemId });
   };
 
@@ -127,7 +124,7 @@ const useSurveyViewModel = () => {
     );
   };
 
-  const handleChangeItemType = (type: 'checkbox' | 'radio' | 'select') => {
+  const handleChangeItemType = (type: itemsType) => {
     const { sectionId, itemId } = currentActiveItemIndex;
 
     setSurveySections((sections) =>
@@ -135,6 +132,9 @@ const useSurveyViewModel = () => {
         const section = sections[sectionId];
         const item = section.items[itemId];
         item.type = type;
+        if (item.type === 'textarea') {
+          item.options = null;
+        }
       })
     );
   };
@@ -146,8 +146,10 @@ const useSurveyViewModel = () => {
       produce(sections, (sections) => {
         const section = sections[sectionId];
         const item = section.items[itemId];
-        const option = item.options[optionIndex];
-        option.text = value;
+        if (item.options) {
+          const option = item.options[optionIndex];
+          option.text = value;
+        }
       })
     );
   };
@@ -172,7 +174,9 @@ const useSurveyViewModel = () => {
         items: section.items,
       })),
     });
+    window.location.reload();
   };
+
   return {
     survey,
     handleSurveyInput,
@@ -188,7 +192,6 @@ const useSurveyViewModel = () => {
     handleAddSections,
     onSubmit,
     currentActiveItemIndex,
-    toolbarTop,
   };
 };
 

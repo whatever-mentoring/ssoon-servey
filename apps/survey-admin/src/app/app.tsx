@@ -16,8 +16,10 @@ import ToolBar from './components/ToolBar';
 import SurveyItem from './components/SurveyItem';
 import { assignInlineVars } from '@vanilla-extract/dynamic';
 import useSurveyViewModel from './hooks/viewmodel/useSurveyViewModel';
+import { useEffect, useRef, useState } from 'react';
 
 export default function App() {
+  const sectionsContainerRef = useRef<HTMLDivElement>(null);
   const {
     survey,
     handleSurveyInput,
@@ -32,11 +34,29 @@ export default function App() {
     handleAddSections,
     handleDeleteItem,
     onSubmit,
-    toolbarTop,
     currentActiveItemIndex,
   } = useSurveyViewModel();
-
+  const [toolbarTop, setToolbarTop] = useState(0);
   const { sectionId, itemId } = currentActiveItemIndex;
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const trackingActiveItemScroll = () => {
+      const el = sectionsContainerRef.current?.querySelector(
+        'div[data-active=true]'
+      ) as HTMLDivElement;
+      const scroll = el.getBoundingClientRect().top + window.scrollY;
+      setToolbarTop(scroll);
+      timeoutId = setTimeout(trackingActiveItemScroll, 250);
+    };
+
+    timeoutId = setTimeout(trackingActiveItemScroll, 250);
+
+    return () => {
+      timeoutId && clearTimeout(timeoutId);
+    };
+  }, []);
 
   return (
     <div className={container}>
@@ -67,7 +87,7 @@ export default function App() {
           </div>
         </Card>
         <Block height={40} />
-        <div className={sectionsContainer}>
+        <div className={sectionsContainer} ref={sectionsContainerRef}>
           {surveySections.map((section, sectionIndex) => (
             <div key={section.id} className={sectionWrapper}>
               <div className={sectionLabel}>{`${surveySections.length} 중 ${
@@ -75,24 +95,30 @@ export default function App() {
               } 섹션`}</div>
               <div className={itemsContainer}>
                 {section.items.map((item, itemIndex) => (
-                  <SurveyItem
+                  <div
                     key={`${section.id}_${itemIndex}`}
-                    isActive={
+                    data-active={
                       sectionId === sectionIndex && itemId === itemIndex
                     }
-                    item={item}
-                    onActiveItem={(top) =>
-                      handleActiveItem(sectionIndex, itemIndex, top)
-                    }
-                    onAddOptions={handleAddOption}
-                    onChangeOptionText={handleChangeOptionText}
-                    onChangeItemType={handleChangeItemType}
-                    onChangeItemRequired={handleChangeItemRequired}
-                    onChangeItemTitle={handleChangeItemTitle}
-                    onDeleteItem={() =>
-                      handleDeleteItem(sectionIndex, itemIndex)
-                    }
-                  />
+                  >
+                    <SurveyItem
+                      isActive={
+                        sectionId === sectionIndex && itemId === itemIndex
+                      }
+                      item={item}
+                      onActiveItem={() =>
+                        handleActiveItem(sectionIndex, itemIndex)
+                      }
+                      onAddOptions={handleAddOption}
+                      onChangeOptionText={handleChangeOptionText}
+                      onChangeItemType={handleChangeItemType}
+                      onChangeItemRequired={handleChangeItemRequired}
+                      onChangeItemTitle={handleChangeItemTitle}
+                      onDeleteItem={() =>
+                        handleDeleteItem(sectionIndex, itemIndex)
+                      }
+                    />
+                  </div>
                 ))}
               </div>
             </div>
