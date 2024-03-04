@@ -4,7 +4,7 @@ export type SurveyForm =
   | {
       // itemId
       [key: string]: {
-        value?: string[] | string;
+        value?: string[];
         type: 'radio' | 'select' | 'checkbox';
         required: boolean;
         error: boolean;

@@ -1,5 +1,5 @@
 import { Card } from '@ssoon-servey/shared-ui';
-import { useGetSurveyList } from '../survey/hooks/useSurvey';
+import { useGetSurveyList } from '../survey/hooks/api/useSurvey';
 import * as $ from './page.css';
 import { Link } from 'react-router-dom';
 

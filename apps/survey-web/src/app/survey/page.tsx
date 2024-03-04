@@ -1,4 +1,4 @@
-import { useGetSurvey } from './hooks/useSurvey';
+import { useGetSurvey, useGetSurveyAnswer } from './hooks/api/useSurvey';
 import * as $ from './page.css';
 import SurveyTitle from './components/SurveyTitle';
 import SurveyItem from './components/SurveyItem';
@@ -10,6 +10,9 @@ import { SurveyForm, SurveyFormContext } from './hooks/useSurveyFormContext';
 const SurveyPage = () => {
   const { surveyId, pageNumber } = usePageValue();
   const { data, isError, isLoading } = useGetSurvey(surveyId);
+  const { data: answers } = useGetSurveyAnswer(pageNumber);
+  // console.log('answers : ', answers);
+
   const [surveyFormValue, setSurveyFormValue] = useState<SurveyForm>(undefined);
   const section = data?.sections.filter(
     (section) => section.survey_id === surveyId
@@ -17,11 +20,17 @@ const SurveyPage = () => {
 
   useEffect(() => {
     if (!section) return;
+
     const obj: SurveyForm = {};
     for (const item of section?.items ?? []) {
       const { id } = item;
+
+      const answerValue = answers
+        ?.filter((answer) => answer.item_id === id)
+        .map((answer) => answer.option_text);
+
       obj[id] = {
-        value: surveyFormValue?.[id]?.value ?? undefined,
+        value: answerValue ?? surveyFormValue?.[id]?.value,
         required: item.question_required,
         type: item.question_type,
         error: false,

@@ -1,8 +1,10 @@
-import { Options } from '../../hooks/useSurvey';
+import { Options, usePostSurveyAnswer } from '../../hooks/api/useSurvey';
 import { Block, Card, Checkbox, Radio } from '@ssoon-servey/shared-ui';
 import * as $ from './SurveyItem.css';
 import { useSurveyFormContext } from '../../hooks/useSurveyFormContext';
 import { validate } from '../../utils/validate';
+import usePageValue from '../../hooks/usePageValue';
+import { useRef } from 'react';
 
 const SurveyItem = ({
   title,
@@ -72,17 +74,20 @@ const RadioOptions = ({
   itemId: number;
 }) => {
   const { surveyFormValue, onChangeForm } = useSurveyFormContext();
+  const { surveyId } = usePageValue();
+  const [mutate] = usePostSurveyAnswer();
   const formValue = surveyFormValue?.[itemId]?.value;
-
   const handleChangeRadio = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.currentTarget;
+    const { value, dataset } = e.currentTarget;
     onChangeForm({
       itemId,
       type,
-      value,
+      value: [value],
       required,
       error: validate(type, value),
     });
+
+    mutate({ surveyId, itemId, optionsId: dataset.id as unknown as number });
   };
   return (
     <>
@@ -90,9 +95,10 @@ const RadioOptions = ({
         <div key={option.id} className={$.optionContainer}>
           <label className={$.optionWrapper}>
             <Radio
+              data-id={option.id}
               value={option.option_text}
               name={option.option_text}
-              checked={option.option_text === formValue}
+              checked={option.option_text === formValue?.[0]}
               onChange={handleChangeRadio}
             />
             <span>{option.option_text}</span>
@@ -115,12 +121,14 @@ const CheckboxOptions = ({
   itemId: number;
 }) => {
   const { surveyFormValue, onChangeForm } = useSurveyFormContext();
+  const checkboxesRef = useRef<(HTMLInputElement | null)[]>([]);
+  const { surveyId } = usePageValue();
+  const [mutate] = usePostSurveyAnswer();
   const formValue = surveyFormValue?.[itemId]?.value;
 
   const handleChangeCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.currentTarget;
     const isError = checked ? false : validate(type, formValue);
-
     let checkboxValue = [];
     if (typeof formValue === 'string') return;
     if (!formValue) {
@@ -137,13 +145,27 @@ const CheckboxOptions = ({
       value: checkboxValue,
       error: isError,
     });
+
+    const checkedOptionIds = checkboxesRef.current.reduce(
+      (optionIds, checkbox) => {
+        if (checkbox?.checked) {
+          optionIds.push(checkbox?.dataset.id as unknown as number);
+        }
+        return optionIds;
+      },
+      [] as number[]
+    );
+
+    mutate({ surveyId, itemId, optionsId: checkedOptionIds });
   };
   return (
     <>
-      {options.map((option) => (
+      {options.map((option, i) => (
         <div key={option.id} className={$.optionContainer}>
           <label className={$.optionWrapper}>
             <Checkbox
+              ref={(el) => (checkboxesRef.current[i] = el)}
+              data-id={option.id}
               value={option.option_text}
               name={option.option_text}
               checked={formValue?.includes(option.option_text)}
@@ -169,16 +191,23 @@ const SelectOptions = ({
   itemId: number;
 }) => {
   const { surveyFormValue, onChangeForm } = useSurveyFormContext();
+  const { surveyId } = usePageValue();
+  const [mutate] = usePostSurveyAnswer();
   const formValue = surveyFormValue?.[itemId]?.value ?? '';
 
   const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.currentTarget;
+    const { value, selectedOptions } = e.currentTarget;
     onChangeForm({
       itemId,
       type,
       required,
-      value,
+      value: [value],
       error: validate(type, value),
+    });
+    mutate({
+      surveyId,
+      itemId,
+      optionsId: selectedOptions[0].dataset.id as unknown as number,
     });
   };
 
@@ -186,12 +215,16 @@ const SelectOptions = ({
     <div className={$.selectBox}>
       <select
         className={$.select}
-        value={formValue}
+        value={formValue[0]}
         onChange={handleChangeSelect}
       >
         <option value={''}>선택</option>
         {options.map((option) => (
-          <option key={option.id} value={option.option_text}>
+          <option
+            data-id={option.id}
+            key={option.id}
+            value={option.option_text}
+          >
             {option.option_text}
           </option>
         ))}
